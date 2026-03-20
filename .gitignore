@@ -1,0 +1,6 @@
+node_modules/
+backend/node_modules/
+frontend-nextjs/node_modules/
+.env
+.next/
+.dart_tool/
