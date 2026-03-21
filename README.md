@@ -19,7 +19,7 @@ TaskFlow is a modern full-stack task management application that allows users to
 - Search and filter tasks
 
 ###  UI/UX
-- Responsive design (mobile + desktop)
+- Responsive design
 - Modern lavender-themed dashboard
 - Toast notifications for actions
 - Password strength indicator (Weak / Medium / Strong)
@@ -77,3 +77,18 @@ npx prisma generate
 ```bash
 npm run dev
 ```
+
+#### Go to the frontend folder
+```bash
+cd ../frontend-nextjs
+```
+#### Install dependencies
+```bash
+npm install
+```
+#### Start the frontend
+```bash
+npm run dev
+```
+
+Frontend runs on: http://localhost:3000
