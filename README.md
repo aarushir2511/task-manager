@@ -42,7 +42,7 @@ TaskFlow is a modern full-stack task management application that allows users to
 - JWT Authentication
 
 ---
-# 📝 Task Manager App
+# Task Manager App
 
 A full-stack Task Manager application with authentication, task CRUD operations, search/filtering, and a responsive UI built using **Next.js**, **Node.js**, **Express**, **Prisma**, and **PostgreSQL**.
 
