@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 const API_BASE = 'http://localhost:5000';
 
@@ -17,36 +18,19 @@ export default function SignUpLoginPage() {
 
   const handleSubmit = async () => {
     if (!email.trim() || !password.trim()) {
-      alert('Please fill in all fields');
+      toast.error('Please fill in all fields');
       return;
     }
 
     try {
       setLoading(true);
 
-      if (mode === 'register') {
-        const res = await fetch(`${API_BASE}/auth/register`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ email, password }),
-        });
+      const endpoint =
+        mode === 'register'
+          ? `${API_BASE}/auth/register`
+          : `${API_BASE}/auth/login`;
 
-        const data = await res.json();
-
-        if (!res.ok) {
-          alert(data?.msg || 'Registration failed');
-          return;
-        }
-
-        alert(data?.msg || 'Registered successfully!');
-        setMode('login');
-        setPassword('');
-        return;
-      }
-
-      const res = await fetch(`${API_BASE}/auth/login`, {
+      const res = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -54,18 +38,43 @@ export default function SignUpLoginPage() {
         body: JSON.stringify({ email, password }),
       });
 
+      const contentType = res.headers.get('content-type') || '';
+
+      if (!contentType.includes('application/json')) {
+        const text = await res.text();
+        console.error('Non-JSON response:', text);
+        toast.error('Backend returned an invalid response');
+        return;
+      }
+
       const data = await res.json();
+
+      if (!res.ok) {
+        toast.error(
+          data?.msg || `${mode === 'register' ? 'Registration' : 'Login'} failed`
+        );
+        return;
+      }
+
+      if (mode === 'register') {
+        toast.success(data?.msg || 'Registered successfully!');
+        setMode('login');
+        setPassword('');
+        return;
+      }
 
       if (data?.accessToken) {
         localStorage.setItem('token', data.accessToken);
-        alert('Login successful!');
+        toast.success('Login successful!');
         router.push('/dashboard');
       } else {
-        alert(data?.msg || 'Login failed');
+        toast.error(data?.msg || 'Login failed');
       }
     } catch (error) {
       console.error(error);
-      alert('Server error. Please try again.');
+      toast.error(
+        'Could not connect to backend. Make sure backend is running on port 5000.'
+      );
     } finally {
       setLoading(false);
     }

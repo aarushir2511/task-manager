@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 import DashboardTopbar from './DashboardTopbar';
 import StatsRow from './StatsRow';
 import TaskGrid from './TaskGrid';
@@ -45,6 +46,7 @@ export default function TaskDashboardClient() {
 
       if (res.status === 401 || res.status === 403) {
         localStorage.removeItem('token');
+        toast.error('Session expired. Please login again.');
         router.push('/');
         return;
       }
@@ -53,6 +55,7 @@ export default function TaskDashboardClient() {
       setTasks(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Failed to fetch tasks:', error);
+      toast.error('Failed to fetch tasks');
       setTasks([]);
     } finally {
       setIsLoading(false);
@@ -72,7 +75,7 @@ export default function TaskDashboardClient() {
     }
 
     if (!title.trim()) {
-      alert('Please enter a task title');
+      toast.error('Please enter a task title');
       return;
     }
 
@@ -89,15 +92,16 @@ export default function TaskDashboardClient() {
       const newTask = await res.json();
 
       if (!res.ok) {
-        alert(newTask?.msg || 'Failed to create task');
+        toast.error(newTask?.msg || 'Failed to create task');
         return;
       }
 
       setTasks((prev) => [newTask, ...prev]);
       setTitle('');
+      toast.success('Task created');
     } catch (error) {
       console.error('Failed to create task:', error);
-      alert('Failed to create task');
+      toast.error('Failed to create task');
     }
   };
 
@@ -120,16 +124,20 @@ export default function TaskDashboardClient() {
       const updatedTask = await res.json();
 
       if (!res.ok) {
-        alert(updatedTask?.msg || 'Failed to update task');
+        toast.error(updatedTask?.msg || 'Failed to update task');
         return;
       }
 
       setTasks((prev) =>
         prev.map((task) => (task.id === id ? updatedTask : task))
       );
+
+      toast.success(
+        updatedTask.completed ? 'Marked as complete' : 'Marked as pending'
+      );
     } catch (error) {
       console.error('Failed to toggle task:', error);
-      alert('Failed to update task');
+      toast.error('Failed to update task');
     }
   };
 
@@ -151,14 +159,15 @@ export default function TaskDashboardClient() {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        alert(data?.msg || 'Failed to delete task');
+        toast.error(data?.msg || 'Failed to delete task');
         return;
       }
 
       setTasks((prev) => prev.filter((task) => task.id !== id));
+      toast.success('Task deleted');
     } catch (error) {
       console.error('Failed to delete task:', error);
-      alert('Failed to delete task');
+      toast.error('Failed to delete task');
     }
   };
 
@@ -171,13 +180,13 @@ export default function TaskDashboardClient() {
     }
 
     if (!newTitle.trim()) {
-      alert('Task title cannot be empty');
+      toast.error('Task title cannot be empty');
       return;
     }
 
     try {
       const res = await fetch(`${API_BASE}/tasks/${id}`, {
-        method: 'PATCH', // change to PUT if your backend uses PUT
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
@@ -188,16 +197,18 @@ export default function TaskDashboardClient() {
       const updatedTask = await res.json();
 
       if (!res.ok) {
-        alert(updatedTask?.msg || 'Failed to update task');
+        toast.error(updatedTask?.msg || 'Failed to update task');
         return;
       }
 
       setTasks((prev) =>
         prev.map((task) => (task.id === id ? updatedTask : task))
       );
+
+      toast.success('Task updated');
     } catch (error) {
       console.error('Failed to edit task:', error);
-      alert('Failed to edit task');
+      toast.error('Failed to update task');
     }
   };
 
