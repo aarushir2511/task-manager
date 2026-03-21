@@ -1,65 +1,331 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+
+const API_BASE = 'http://localhost:5000';
+
+type Mode = 'login' | 'register';
+
+export default function SignUpLoginPage() {
+  const router = useRouter();
+
+  const [mode, setMode] = useState<Mode>('login');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async () => {
+    if (!email.trim() || !password.trim()) {
+      alert('Please fill in all fields');
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      if (mode === 'register') {
+        const res = await fetch(`${API_BASE}/auth/register`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, password }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          alert(data?.msg || 'Registration failed');
+          return;
+        }
+
+        alert(data?.msg || 'Registered successfully!');
+        setMode('login');
+        setPassword('');
+        return;
+      }
+
+      const res = await fetch(`${API_BASE}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+
+      if (data?.accessToken) {
+        localStorage.setItem('token', data.accessToken);
+        alert('Login successful!');
+        router.push('/dashboard');
+      } else {
+        alert(data?.msg || 'Login failed');
+      }
+    } catch (error) {
+      console.error(error);
+      alert('Server error. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const submitButton = (
+    <button
+      onClick={handleSubmit}
+      disabled={loading}
+      style={{
+        backgroundColor: loading ? '#93c5fd' : '#2563eb',
+        color: '#ffffff',
+        width: '100%',
+        padding: '12px 16px',
+        borderRadius: '12px',
+        fontWeight: 700,
+        marginTop: '8px',
+        cursor: loading ? 'not-allowed' : 'pointer',
+        border: 'none',
+        boxShadow: '0 10px 20px rgba(37, 99, 235, 0.18)',
+      }}
+    >
+      {loading
+        ? mode === 'login'
+          ? 'Logging in...'
+          : 'Creating account...'
+        : mode === 'login'
+        ? 'Login'
+        : 'Create account'}
+    </button>
+  );
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <main className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-blue-50 flex items-center justify-center p-4 lg:p-0">
+      <div className="w-full max-w-md lg:hidden">
+        <div className="flex items-center justify-center gap-2.5 mb-8">
+          <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center shadow-md">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path
+                d="M4 10l4 4 8-8"
+                stroke="white"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
+          <span className="text-2xl font-bold text-gray-900 tracking-tight">
+            TaskFlow
+          </span>
+        </div>
+
+        <div className="bg-white rounded-3xl border border-gray-200 shadow-xl p-6 sm:p-8">
+          <div className="flex bg-gray-100 rounded-2xl p-1 mb-6">
+            <button
+              onClick={() => setMode('login')}
+              className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+                mode === 'login'
+                  ? 'bg-white text-gray-900 shadow-sm'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+              Login
+            </button>
+            <button
+              onClick={() => setMode('register')}
+              className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+                mode === 'register'
+                  ? 'bg-white text-gray-900 shadow-sm'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
             >
-              Learning
-            </a>{" "}
-            center.
+              Register
+            </button>
+          </div>
+
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                Email
+              </label>
+              <input
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                Password
+              </label>
+              <input
+                type="password"
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+
+            {submitButton}
+          </div>
+
+          <p className="text-sm text-gray-500 text-center mt-5">
+            {mode === 'login'
+              ? "Don’t have an account?"
+              : 'Already have an account?'}{' '}
+            <button
+              onClick={() => setMode(mode === 'login' ? 'register' : 'login')}
+              className="text-blue-600 font-semibold hover:underline"
+            >
+              {mode === 'login' ? 'Register' : 'Login'}
+            </button>
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </div>
+
+      <div className="hidden lg:flex w-full min-h-screen">
+        <div className="flex-1 bg-gradient-to-br from-indigo-700 via-indigo-500 to-violet-500 flex flex-col justify-between p-12 xl:p-16 relative overflow-hidden">
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-white/10" />
+            <div className="absolute top-1/2 -right-32 w-80 h-80 rounded-full bg-white/10" />
+            <div className="absolute -bottom-20 left-1/3 w-64 h-64 rounded-full bg-white/10" />
+          </div>
+
+          <div className="flex items-center gap-3 relative z-10">
+            <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg border border-white/30">
+              <svg width="22" height="22" viewBox="0 0 20 20" fill="none">
+                <path
+                  d="M4 10l4 4 8-8"
+                  stroke="white"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+            <span className="text-2xl font-bold text-white tracking-tight">
+              TaskFlow
+            </span>
+          </div>
+
+          <div className="relative z-10 max-w-md">
+            <h1 className="text-4xl xl:text-5xl font-bold text-white leading-tight mb-5">
+              Organize your work,
+              <br />
+              <span className="text-indigo-100">amplify your focus.</span>
+            </h1>
+            <p className="text-indigo-100 text-lg leading-relaxed mb-10">
+              TaskFlow helps teams and individuals manage tasks effortlessly —
+              from quick to-dos to complex projects.
+            </p>
+
+            <div className="space-y-4">
+              {[
+                { icon: '✓', text: 'Intuitive task management with smart filters' },
+                { icon: '✓', text: 'Real-time progress tracking and completion stats' },
+                { icon: '✓', text: 'Clean, distraction-free workspace' },
+              ].map((item, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+                    <span className="text-white text-xs font-bold">{item.icon}</span>
+                  </div>
+                  <span className="text-indigo-100 text-sm">{item.text}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="relative z-10">
+            <p className="text-indigo-100 text-sm italic">
+              &ldquo;The secret of getting ahead is getting started.&rdquo;
+            </p>
+            <p className="text-indigo-200 text-xs mt-1">— Mark Twain</p>
+          </div>
         </div>
-      </main>
-    </div>
+
+        <div className="w-full max-w-lg xl:max-w-xl flex items-center justify-center p-10 xl:p-16 bg-white">
+          <div className="w-full max-w-md">
+            <div className="mb-8">
+              <p className="text-xs font-semibold text-blue-600 uppercase tracking-widest mb-2">
+                Get started
+              </p>
+              <h2 className="text-2xl font-bold text-gray-900">
+                Welcome to TaskFlow
+              </h2>
+            </div>
+
+            <div className="bg-white rounded-3xl border border-gray-200 shadow-xl p-6 sm:p-8">
+              <div className="flex bg-gray-100 rounded-2xl p-1 mb-6">
+                <button
+                  onClick={() => setMode('login')}
+                  className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+                    mode === 'login'
+                      ? 'bg-white text-gray-900 shadow-sm'
+                      : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  Login
+                </button>
+                <button
+                  onClick={() => setMode('register')}
+                  className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+                    mode === 'register'
+                      ? 'bg-white text-gray-900 shadow-sm'
+                      : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  Register
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    placeholder="Enter your email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                    Password
+                  </label>
+                  <input
+                    type="password"
+                    placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                {submitButton}
+              </div>
+
+              <p className="text-sm text-gray-500 text-center mt-5">
+                {mode === 'login'
+                  ? "Don’t have an account?"
+                  : 'Already have an account?'}{' '}
+                <button
+                  onClick={() => setMode(mode === 'login' ? 'register' : 'login')}
+                  className="text-blue-600 font-semibold hover:underline"
+                >
+                  {mode === 'login' ? 'Register' : 'Login'}
+                </button>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
   );
 }
