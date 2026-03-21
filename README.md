@@ -26,7 +26,7 @@ TaskFlow is a modern full-stack task management application that allows users to
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 ### Frontend
 - Next.js 14+ (App Router)
