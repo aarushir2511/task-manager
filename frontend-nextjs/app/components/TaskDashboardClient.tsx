@@ -162,6 +162,45 @@ export default function TaskDashboardClient() {
     }
   };
 
+  const handleEditTask = async (id: number, newTitle: string) => {
+    const token = getToken();
+
+    if (!token) {
+      router.push('/');
+      return;
+    }
+
+    if (!newTitle.trim()) {
+      alert('Task title cannot be empty');
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_BASE}/tasks/${id}`, {
+        method: 'PATCH', // change to PUT if your backend uses PUT
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ title: newTitle }),
+      });
+
+      const updatedTask = await res.json();
+
+      if (!res.ok) {
+        alert(updatedTask?.msg || 'Failed to update task');
+        return;
+      }
+
+      setTasks((prev) =>
+        prev.map((task) => (task.id === id ? updatedTask : task))
+      );
+    } catch (error) {
+      console.error('Failed to edit task:', error);
+      alert('Failed to edit task');
+    }
+  };
+
   const filteredTasks = useMemo(() => {
     return tasks.filter((task) => {
       const matchesFilter =
@@ -239,6 +278,7 @@ export default function TaskDashboardClient() {
           tasks={filteredTasks}
           onToggleComplete={handleToggleComplete}
           onDelete={handleDelete}
+          onEdit={handleEditTask}
         />
       </main>
     </div>
