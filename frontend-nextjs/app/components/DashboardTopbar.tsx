@@ -1,6 +1,6 @@
 'use client';
 
-import { Plus, LogOut } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 interface DashboardTopbarProps {
@@ -18,13 +18,13 @@ export default function DashboardTopbar({
   };
 
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-20">
+    <header className="bg-white/80 backdrop-blur-md border-b border-violet-100 sticky top-0 z-20">
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 h-16 lg:h-[68px] flex items-center justify-between gap-4">
         <button
           onClick={() => router.push('/dashboard')}
           className="flex items-center gap-2.5 hover:opacity-80 transition-opacity shrink-0"
         >
-          <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center shadow-sm">
+          <div className="w-8 h-8 rounded-lg bg-violet-600 flex items-center justify-center shadow-sm">
             <svg width="17" height="17" viewBox="0 0 20 20" fill="none">
               <path
                 d="M4 10l4 4 8-8"
@@ -40,22 +40,14 @@ export default function DashboardTopbar({
           </span>
         </button>
 
-        <div className="hidden lg:flex items-center gap-1 text-sm text-gray-500">
+        <div className="hidden lg:flex items-center gap-1 text-sm text-violet-500">
           <span className="font-medium text-gray-700">My Workspace</span>
         </div>
 
         <div className="flex items-center gap-2 lg:gap-3">
           <button
-            onClick={onAddTask}
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-all shadow-sm"
-          >
-            <Plus size={16} strokeWidth={2.5} />
-            <span>Add Task</span>
-          </button>
-
-          <button
             onClick={handleLogout}
-            className="flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all"
+            className="flex items-center gap-2 rounded-xl border border-violet-200 bg-white px-3 py-2 text-sm font-medium text-violet-700 hover:bg-violet-50 transition-all"
           >
             <LogOut size={16} />
             <span className="hidden sm:inline">Logout</span>

@@ -237,16 +237,16 @@ export default function TaskDashboardClient() {
   }, [tasks]);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-[#f6f1ff] via-[#f3ecff] to-[#efe7ff] flex flex-col">
       <DashboardTopbar onAddTask={handleAddTask} />
 
       <main className="flex-1 w-full max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 py-6 lg:py-10">
         <StatsRow stats={stats} isLoading={isLoading} />
 
-        <div className="mt-7 mb-6 bg-white rounded-2xl border border-gray-200 p-4 lg:p-5 shadow-sm">
+        <div className="mt-7 mb-6 bg-[#faf8ff] rounded-2xl border border-violet-100 p-4 lg:p-5 shadow-sm">
           <div className="flex flex-col lg:flex-row gap-3">
             <input
-              className="flex-1 rounded-xl border border-gray-300 bg-white text-gray-900 px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400"
+              className="flex-1 rounded-xl border border-violet-200 bg-[#fdfcff] text-gray-900 px-4 py-3 outline-none focus:ring-2 focus:ring-violet-400 focus:border-violet-400 placeholder:text-gray-400"
               placeholder="Add a new task"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -257,7 +257,7 @@ export default function TaskDashboardClient() {
 
             <button
               onClick={handleAddTask}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-3 rounded-xl transition-all"
+              className="bg-violet-600 hover:bg-violet-700 text-white font-semibold px-5 py-3 rounded-xl transition-all"
             >
               Add Task
             </button>
@@ -265,7 +265,7 @@ export default function TaskDashboardClient() {
 
           <div className="flex flex-col sm:flex-row gap-3 mt-4">
             <input
-              className="flex-1 rounded-xl border border-gray-300 bg-white text-gray-900 px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400"
+              className="flex-1 rounded-xl border border-violet-200 bg-[#fdfcff] text-gray-900 px-4 py-3 outline-none focus:ring-2 focus:ring-violet-400 focus:border-violet-400 placeholder:text-gray-400"
               placeholder="Search tasks..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -276,7 +276,7 @@ export default function TaskDashboardClient() {
               onChange={(e) =>
                 setFilter(e.target.value as 'all' | 'completed' | 'pending')
               }
-              className="rounded-xl border border-gray-300 bg-white text-gray-900 px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="rounded-xl border border-violet-200 bg-[#fdfcff] text-gray-900 px-4 py-3 outline-none focus:ring-2 focus:ring-violet-400 focus:border-violet-400"
             >
               <option value="all">All Tasks</option>
               <option value="pending">Pending</option>

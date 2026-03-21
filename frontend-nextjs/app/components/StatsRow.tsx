@@ -19,9 +19,9 @@ const statCards = [
     key: 'total' as const,
     label: 'Total Tasks',
     icon: ListTodo,
-    color: 'text-primary-500',
-    bg: 'bg-primary-50',
-    border: 'border-primary-100',
+    color: 'text-violet-500',
+    bg: 'bg-violet-50',
+    border: 'border-violet-100',
     suffix: '',
   },
   {
@@ -46,9 +46,9 @@ const statCards = [
     key: 'rate' as const,
     label: 'Completion Rate',
     icon: TrendingUp,
-    color: 'text-violet-500',
-    bg: 'bg-violet-50',
-    border: 'border-violet-100',
+    color: 'text-fuchsia-500',
+    bg: 'bg-fuchsia-50',
+    border: 'border-fuchsia-100',
     suffix: '%',
   },
 ];
@@ -60,13 +60,13 @@ export default function StatsRow({ stats, isLoading }: StatsRowProps) {
         {Array.from({ length: 4 }).map((_, i) => (
           <div
             key={i}
-            className="bg-white rounded-2xl border border-gray-100 p-5 animate-pulse"
+            className="bg-[#faf8ff] rounded-2xl border border-violet-100 p-5 animate-pulse"
           >
             <div className="flex items-center justify-between mb-3">
-              <div className="w-24 h-3.5 bg-gray-200 rounded-full" />
-              <div className="w-9 h-9 bg-gray-100 rounded-xl" />
+              <div className="w-24 h-3.5 bg-violet-100 rounded-full" />
+              <div className="w-9 h-9 bg-violet-50 rounded-xl" />
             </div>
-            <div className="w-14 h-8 bg-gray-200 rounded-lg" />
+            <div className="w-14 h-8 bg-violet-100 rounded-lg" />
           </div>
         ))}
       </div>
@@ -78,7 +78,7 @@ export default function StatsRow({ stats, isLoading }: StatsRowProps) {
       {statCards.map(({ key, label, icon: Icon, color, bg, border, suffix }) => (
         <div
           key={key}
-          className="bg-white rounded-2xl border border-gray-100 p-5 lg:p-6 shadow-sm hover:shadow-md transition-shadow duration-200"
+          className="bg-[#faf8ff] rounded-2xl border border-violet-100 p-5 lg:p-6 shadow-sm hover:shadow-md transition-shadow duration-200"
         >
           <div className="flex items-center justify-between mb-3 lg:mb-4">
             <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">

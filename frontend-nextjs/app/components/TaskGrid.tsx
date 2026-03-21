@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 type Task = {
   id: number;
@@ -26,7 +27,7 @@ export default function TaskGrid({
 
   if (tasks.length === 0) {
     return (
-      <div className="bg-white border border-gray-200 rounded-2xl p-10 text-center">
+      <div className="bg-[#faf8ff] border border-violet-100 rounded-2xl p-10 text-center">
         <h3 className="text-lg font-semibold text-gray-900">No tasks yet</h3>
         <p className="text-sm text-gray-500 mt-2">
           Add your first task to get started.
@@ -47,7 +48,7 @@ export default function TaskGrid({
 
   const saveEdit = (taskId: number) => {
     if (!editText.trim()) {
-      alert('Task title cannot be empty');
+      toast.error('Task title cannot be empty');
       return;
     }
 
@@ -61,7 +62,7 @@ export default function TaskGrid({
       {tasks.map((task) => (
         <div
           key={task.id}
-          className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm hover:shadow-md transition-all duration-200"
+          className="bg-[#faf8ff] rounded-2xl border border-violet-100 p-5 shadow-sm hover:shadow-md transition-all duration-200"
         >
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1">
@@ -73,7 +74,7 @@ export default function TaskGrid({
                     if (e.key === 'Enter') saveEdit(task.id);
                     if (e.key === 'Escape') cancelEditing();
                   }}
-                  className="w-full rounded-xl border border-gray-300 bg-white text-gray-900 px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full rounded-xl border border-violet-200 bg-[#fdfcff] text-gray-900 px-3 py-2 outline-none focus:ring-2 focus:ring-violet-400 focus:border-violet-400"
                   autoFocus
                 />
               ) : (
@@ -94,8 +95,8 @@ export default function TaskGrid({
             <span
               className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
                 task.completed
-                  ? 'bg-emerald-50 text-emerald-600'
-                  : 'bg-amber-50 text-amber-600'
+                  ? 'bg-violet-100 text-violet-700'
+                  : 'bg-fuchsia-50 text-fuchsia-700'
               }`}
             >
               {task.completed ? 'Done' : 'Pending'}
@@ -107,8 +108,8 @@ export default function TaskGrid({
               onClick={() => onToggleComplete(task.id)}
               className={`rounded-xl px-3 py-2 text-sm font-semibold transition-all ${
                 task.completed
-                  ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  : 'bg-green-400 text-white hover:bg-green-500'
+                  ? 'bg-violet-100 text-violet-700 hover:bg-violet-200'
+                  : 'bg-[#c4b5fd] text-violet-950 hover:bg-[#b8a4fc]'
               }`}
             >
               {task.completed ? 'Undo' : 'Mark Done'}
@@ -116,7 +117,7 @@ export default function TaskGrid({
 
             <button
               onClick={() => onDelete(task.id)}
-              className="rounded-xl px-3 py-2 text-sm font-semibold bg-red-500 text-white hover:bg-red-600 transition-all"
+              className="rounded-xl px-3 py-2 text-sm font-semibold bg-[#e9d5ff] text-fuchsia-900 hover:bg-[#ddbefc] transition-all"
             >
               Delete
             </button>
@@ -125,14 +126,14 @@ export default function TaskGrid({
               <>
                 <button
                   onClick={() => saveEdit(task.id)}
-                  className="rounded-xl px-3 py-2 text-sm font-semibold bg-blue-600 text-white hover:bg-blue-700 transition-all"
+                  className="rounded-xl px-3 py-2 text-sm font-semibold bg-[#a78bfa] text-white hover:bg-[#9672f7] transition-all"
                 >
                   Save
                 </button>
 
                 <button
                   onClick={cancelEditing}
-                  className="rounded-xl px-3 py-2 text-sm font-semibold bg-gray-200 text-gray-700 hover:bg-gray-300 transition-all"
+                  className="rounded-xl px-3 py-2 text-sm font-semibold bg-[#ede9fe] text-violet-700 hover:bg-[#ddd6fe] transition-all"
                 >
                   Cancel
                 </button>
@@ -140,7 +141,7 @@ export default function TaskGrid({
             ) : (
               <button
                 onClick={() => startEditing(task)}
-                className="rounded-xl px-3 py-2 text-sm font-semibold bg-yellow-400 text-black hover:bg-yellow-500 transition-all"
+                className="rounded-xl px-3 py-2 text-sm font-semibold bg-[#d8b4fe] text-violet-950 hover:bg-[#cfa0fc] transition-all"
               >
                 Edit
               </button>

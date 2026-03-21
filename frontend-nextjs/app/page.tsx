@@ -8,6 +8,41 @@ const API_BASE = 'http://localhost:5000';
 
 type Mode = 'login' | 'register';
 
+function getPasswordStrength(password: string) {
+  let score = 0;
+
+  if (password.length >= 6) score++;
+  if (password.length >= 10) score++;
+  if (/[A-Z]/.test(password)) score++;
+  if (/[0-9]/.test(password)) score++;
+  if (/[^A-Za-z0-9]/.test(password)) score++;
+
+  if (score <= 2) {
+    return {
+      label: 'Weak',
+      textColor: 'text-red-500',
+      barColor: 'bg-red-400',
+      width: '33%',
+    };
+  }
+
+  if (score <= 4) {
+    return {
+      label: 'Medium',
+      textColor: 'text-amber-500',
+      barColor: 'bg-amber-400',
+      width: '66%',
+    };
+  }
+
+  return {
+    label: 'Strong',
+    textColor: 'text-emerald-500',
+    barColor: 'bg-emerald-400',
+    width: '100%',
+  };
+}
+
 export default function SignUpLoginPage() {
   const router = useRouter();
 
@@ -15,6 +50,8 @@ export default function SignUpLoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const strength = getPasswordStrength(password);
 
   const handleSubmit = async () => {
     if (!email.trim() || !password.trim()) {
@@ -24,6 +61,14 @@ export default function SignUpLoginPage() {
 
     try {
       setLoading(true);
+
+      if (mode === 'register' && strength.label === 'Weak') {
+        toast.error(
+          'Password is too weak. Use uppercase letters, numbers, and symbols.'
+        );
+        setLoading(false);
+        return;
+      }
 
       const endpoint =
         mode === 'register'
@@ -107,6 +152,24 @@ export default function SignUpLoginPage() {
     </button>
   );
 
+  const passwordStrengthUI =
+    mode === 'register' && password ? (
+      <div className="mt-2">
+        <div className="w-full h-2 rounded-full bg-violet-100 overflow-hidden">
+          <div
+            className={`h-full rounded-full transition-all duration-300 ${strength.barColor}`}
+            style={{ width: strength.width }}
+          />
+        </div>
+        <p className={`text-sm mt-2 font-semibold ${strength.textColor}`}>
+          Password strength: {strength.label}
+        </p>
+      </div>
+    ) : null;
+
+  const inputClasses =
+    'w-full rounded-xl border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500';
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-blue-50 flex items-center justify-center p-4 lg:p-0">
       <div className="w-full max-w-md lg:hidden">
@@ -161,7 +224,7 @@ export default function SignUpLoginPage() {
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className={inputClasses}
               />
             </div>
 
@@ -174,8 +237,9 @@ export default function SignUpLoginPage() {
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className={inputClasses}
               />
+              {passwordStrengthUI}
             </div>
 
             {submitButton}
@@ -300,7 +364,7 @@ export default function SignUpLoginPage() {
                     placeholder="Enter your email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className={inputClasses}
                   />
                 </div>
 
@@ -313,8 +377,9 @@ export default function SignUpLoginPage() {
                     placeholder="Enter your password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className={inputClasses}
                   />
+                  {passwordStrengthUI}
                 </div>
 
                 {submitButton}
