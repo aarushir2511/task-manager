@@ -50,24 +50,30 @@ A full-stack Task Manager application with authentication, task CRUD operations,
 
 ##  Setup Instructions
 
-###  Clone the repository
-
+####  Clone the repository
 ```bash
 git clone <your-repo-url>
 ```
+#### Go to the backend folder
 ```bash
 cd task-manager
 cd backend
 ```
+#### Install dependencies
 ```bash
 npm install
 ```
+#### Setup environment variables
 ```bash
 DATABASE_URL="postgresql://user:password@localhost:5432/taskdb"
 JWT_SECRET="your_secret_key"
 ```
+#### Run Prisma migrations and generate client
 ```bash
 npx prisma migrate dev --name init
 npx prisma generate
+```
+#### Start the backend server
+```bash
 npm run dev
 ```
